@@ -1,0 +1,9 @@
+{
+	"player1" 	: "01-player-1-name.txt",
+	"deck1" 	: "02-player-1-deck-name.txt",
+	"lifeP1" 	: "03-player-1-life-total.txt",
+	"player2" 	: "05-player-2-name.txt",
+	"deck2" 	: "06-player-2-deck-name.txt",
+	"lifeP2"	: "07-player-2-life-total.txt",
+	"producer"	: "08-production-credit.txt"
+}
