@@ -1,2 +1,0 @@
-python OBServer.py
-pause
