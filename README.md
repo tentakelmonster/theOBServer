@@ -1,7 +1,7 @@
 # theOBServer
 LPR tool support yeay
 
-version = 1.0
+version = 1.1
 
 how to use:
 
@@ -9,7 +9,7 @@ how to use:
 
 0b. python needs to be in your systems PATH variable (command line needs to be able to run python)
 
-0c. you'll also need the Tk module for python -> `pip install tk`
+0c. you'll also need the Tk module for python -> `python -m pip install tk`
 
 0d. for easiest use, set up OBServer.py and paths.json right next to the text files
 
@@ -21,13 +21,14 @@ how to use:
 
 1a. alternativly, open command line and type 'python OBServer.py'
 
-2. on startup, the script sets all files to an initial state (all labels are empty, life totals are 20)
+2. on startup, the script resets life totals to 20 and reads the last entries of the name files.
 
-3. enter all names in the corresponding entry slots and press 'set' (these are only updated on 'set', 'reset' and initial startup)
+3. enter all names in the corresponding entry slots and press 'set' (the files are only updated on 'set' and 'reset all')
 
-4. the life totals save on each increment, decrement or changing of the values in the entry
+4. the life totals save on each increment, decrement or any other form of changing the values in the entry.
 
 4a. for best results, only enter integers in these
 
-and that's it :D
+4b. there's hot keys for incrementing and decrementing life totals. these don't work when you're entering something. click anywhere to refocus on the frame (hotkeys work again)
 
+and that's it :D
