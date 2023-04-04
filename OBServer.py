@@ -97,11 +97,11 @@ class obServer(tk.Frame):
         self.mainFrame.bind('f', lambda event: self._incrementLeft())
         self.mainFrame.bind('j', lambda event: self._decrementRight())
         self.mainFrame.bind('k', lambda event: self._incrementRight())
-        self.nameEntry1.bind('<Return>', lambda event: self._writeSingeFile('player1', self.player1.get()))
-        self.nameEntry2.bind('<Return>', lambda event: self._writeSingeFile('player2', self.player2.get()))
-        self.deckEntry1.bind('<Return>', lambda event: self._writeSingeFile('deck1', self.deck1.get()))
-        self.deckEntry2.bind('<Return>', lambda event: self._writeSingeFile('deck2', self.deck2.get()))
-        self.producerEntry.bind('<Return>', lambda event: self._writeSingeFile('producer', self.producer.get()))
+        self.nameEntry1.bind('<Return>', lambda event: self._writeSingleFile('player1', self.player1.get()))
+        self.nameEntry2.bind('<Return>', lambda event: self._writeSingleFile('player2', self.player2.get()))
+        self.deckEntry1.bind('<Return>', lambda event: self._writeSingleFile('deck1', self.deck1.get()))
+        self.deckEntry2.bind('<Return>', lambda event: self._writeSingleFile('deck2', self.deck2.get()))
+        self.producerEntry.bind('<Return>', lambda event: self._writeSingleFile('producer', self.producer.get()))
         self.mainFrame.bind("<Button-1>", self.callback)
 
     def readFilePaths(self):
@@ -113,7 +113,7 @@ class obServer(tk.Frame):
             paths = json.load(jsonFile)
         return paths
 
-    def _writeSingeFile(self, field, value):
+    def _writeSingleFile(self, field, value):
         """ writes the value of a field to the respective file """
         with open(self.paths[field], 'w') as f:
             f.write(value)
