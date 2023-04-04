@@ -42,19 +42,24 @@ class obServer(tk.Frame):
         self.mainFrame.grid(row=rowCount, column=0, rowspan=10, columnspan=6, padx=5, pady=5, sticky=tk.N + tk.W)
         # ------ Name Row ------
         tk.Label(self.mainFrame, text="Name1:").grid(row=rowCount, column=0, padx=5, pady=5, sticky=tk.W)
-        self.nameEntry1 = tk.Entry(self.mainFrame, textvariable=self.player1).grid(row=rowCount, column=1, padx=5, pady=5, columnspan=2, sticky=tk.W)
+        self.nameEntry1 = tk.Entry(self.mainFrame, textvariable=self.player1)
+        self.nameEntry1.grid(row=rowCount, column=1, padx=5, pady=5, columnspan=2, sticky=tk.W) 
         tk.Label(self.mainFrame, text="Name2:").grid(row=rowCount, column=3, padx=5, pady=5, sticky=tk.W)
-        self.nameEntry2 = tk.Entry(self.mainFrame, textvariable=self.player2).grid(row=rowCount, column=4, padx=5, pady=5, columnspan=2, sticky=tk.W)
+        self.nameEntry2 = tk.Entry(self.mainFrame, textvariable=self.player2)
+        self.nameEntry2.grid(row=rowCount, column=4, padx=5, pady=5, columnspan=2, sticky=tk.W)
         # ------ Deck Row ------
         rowCount += 1
         tk.Label(self.mainFrame, text="Deck1:").grid(row=rowCount, column=0, padx=5, pady=5, sticky=tk.W)
-        self.deckEntry1 = tk.Entry(self.mainFrame, textvariable=self.deck1).grid(row=rowCount, column=1, padx=5, pady=5, columnspan=2, sticky=tk.W)
+        self.deckEntry1 = tk.Entry(self.mainFrame, textvariable=self.deck1)
+        self.deckEntry1.grid(row=rowCount, column=1, padx=5, pady=5, columnspan=2, sticky=tk.W)
         tk.Label(self.mainFrame, text="Deck2:").grid(row=rowCount, column=3, padx=5, pady=5, sticky=tk.W)
-        self.deckEntry2 = tk.Entry(self.mainFrame, textvariable=self.deck2).grid(row=rowCount, column=4, padx=5, pady=5, columnspan=2, sticky=tk.W)
+        self.deckEntry2 = tk.Entry(self.mainFrame, textvariable=self.deck2)
+        self.deckEntry2.grid(row=rowCount, column=4, padx=5, pady=5, columnspan=2, sticky=tk.W)
         # ------ Producer and Set Button Row ------
         rowCount += 1
         tk.Label(self.mainFrame, text='Producer:').grid(row=rowCount, column=0, sticky=tk.W)
-        self.producerEntry = tk.Entry(self.mainFrame, textvariable=self.producer).grid(row=rowCount, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.producerEntry = tk.Entry(self.mainFrame, textvariable=self.producer)
+        self.producerEntry.grid(row=rowCount, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.setBtn = tk.Button(self.mainFrame, text='   Set   ', command=self._setNames)
         self.setBtn.grid(row=rowCount, column=4, padx=5, pady=5, sticky=tk.W)
         # ------ Life Total Row ------
@@ -92,6 +97,11 @@ class obServer(tk.Frame):
         self.mainFrame.bind('f', lambda event: self._incrementLeft())
         self.mainFrame.bind('j', lambda event: self._decrementRight())
         self.mainFrame.bind('k', lambda event: self._incrementRight())
+        self.nameEntry1.bind('<Return>', lambda event: self._writeSingeFile('player1', self.player1.get()))
+        self.nameEntry2.bind('<Return>', lambda event: self._writeSingeFile('player2', self.player2.get()))
+        self.deckEntry1.bind('<Return>', lambda event: self._writeSingeFile('deck1', self.deck1.get()))
+        self.deckEntry2.bind('<Return>', lambda event: self._writeSingeFile('deck2', self.deck2.get()))
+        self.producerEntry.bind('<Return>', lambda event: self._writeSingeFile('producer', self.producer.get()))
         self.mainFrame.bind("<Button-1>", self.callback)
 
     def readFilePaths(self):
@@ -102,6 +112,11 @@ class obServer(tk.Frame):
         with open(path2pathJson, 'r') as jsonFile:
             paths = json.load(jsonFile)
         return paths
+
+    def _writeSingeFile(self, field, value):
+        """ writes the value of a field to the respective file """
+        with open(self.paths[field], 'w') as f:
+            f.write(value)
 
     def _setNames(self):
         """ Writes the five name related files """
