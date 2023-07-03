@@ -11,6 +11,14 @@ import os
 import sys
 import json
 from tkinter.messagebox import askyesno
+import random
+try:
+    import keyboard
+    print('Using global keybinds')
+    GLOBAL_KEY_BINDS = True
+except ModuleNotFoundError as e:
+    print('Using regular keybinds')
+    GLOBAL_KEY_BINDS = False
 
 path2pathJson = r'paths.json'   # use this if the json is in the same folder as the script. Use actual path otherwise.
 
@@ -24,6 +32,13 @@ class obServer(tk.Frame):
         self.resetLife()
         self.mainFrame.focus_set()
         self.readInitStates()
+        self.colA = ["Full English", "Oops All", "Five Color", "Big", "Steamy", "Delverless", "Boomer", "Zoomer", "Pauper", 
+                "Saucy", "The legendary", "Topdeck", "Dead Guy", "Ye ol'", "Questionable", "3-0 6-0", "0-2 drop", "The Real Slim", 
+                "Million Dollar", "Invoke", "Chef Anthony's", "Phyrexian", "Regular", "Top", "Junk", "Bad", "Strong", "Cube", "Uber",
+                "Synergistic", "Tiny", "Eldrazi", "Turbo"]
+        self.colB = ["Breakfast", "Aggrocontrol", "Tempo", "Tribal", "Baneslayers", "Mulldrifters", "Deck", "Problems", "Tron", 
+                "Ham Sandwich", "Bears", "Money Pile", "Baby!", "Sagas", "Triomes", "Zoo", "Looters", "Sushi", "Gods", 
+                "Moms", "Noodle", "Junk", "Megafauna", "Mustache", "Tools", "Synergy", "Saprolings", "Squirrels"]
 
     def build(self):
         """ Here the GUI is built. """
@@ -55,7 +70,7 @@ class obServer(tk.Frame):
         tk.Label(self.mainFrame, text="Deck2:").grid(row=rowCount, column=3, padx=5, pady=5, sticky=tk.W)
         self.deckEntry2 = tk.Entry(self.mainFrame, textvariable=self.deck2)
         self.deckEntry2.grid(row=rowCount, column=4, padx=5, pady=5, columnspan=2, sticky=tk.W)
-        # ------ Producer and Set Button Row ------
+        # ------ Producer and Buttons Row ------
         rowCount += 1
         tk.Label(self.mainFrame, text='Producer:').grid(row=rowCount, column=0, sticky=tk.W)
         self.producerEntry = tk.Entry(self.mainFrame, textvariable=self.producer)
@@ -88,21 +103,30 @@ class obServer(tk.Frame):
         tk.Label(self.mainFrame, text=' k ').grid(row=rowCount, column=4, padx=5, pady=5, sticky=tk.W)
         # ------ Reset and Quit Row ------
         rowCount += 1
+        self.generateNamesBtn = tk.Button(self.mainFrame, text='   Generate Deck Names   ', command=self._generateDeckNames)
+        self.generateNamesBtn.grid(row=rowCount, column=0, padx=5, pady=5, sticky=tk.W)
         self.resetBtn = tk.Button(self.mainFrame, text=' Reset All', command=self._resetAll)
         self.resetBtn.grid(row=rowCount, column=4, padx=5, pady=5, sticky=tk.W)
         self.quitBtn = tk.Button(self.mainFrame, text=' Exit ', command=self._quit)
         self.quitBtn.grid(row=rowCount, column=5, padx=5, pady=5, sticky=tk.W)
         # set key binds
-        self.mainFrame.bind('d', lambda event: self._decrementLeft())
-        self.mainFrame.bind('f', lambda event: self._incrementLeft())
-        self.mainFrame.bind('j', lambda event: self._decrementRight())
-        self.mainFrame.bind('k', lambda event: self._incrementRight())
-        self.nameEntry1.bind('<Return>', lambda event: self._writeSingleFile('player1', self.player1.get()))
-        self.nameEntry2.bind('<Return>', lambda event: self._writeSingleFile('player2', self.player2.get()))
-        self.deckEntry1.bind('<Return>', lambda event: self._writeSingleFile('deck1', self.deck1.get()))
-        self.deckEntry2.bind('<Return>', lambda event: self._writeSingleFile('deck2', self.deck2.get()))
-        self.producerEntry.bind('<Return>', lambda event: self._writeSingleFile('producer', self.producer.get()))
+        if GLOBAL_KEY_BINDS:
+            keyboard.add_hotkey('d', self._decrementLeft)
+            keyboard.add_hotkey('f', self._incrementLeft)
+            keyboard.add_hotkey('j', self._decrementRight)
+            keyboard.add_hotkey('k', self._incrementRight)
+        else:
+            self.mainFrame.bind('d', lambda event: self._decrementLeft())
+            self.mainFrame.bind('f', lambda event: self._incrementLeft())
+            self.mainFrame.bind('j', lambda event: self._decrementRight())
+            self.mainFrame.bind('k', lambda event: self._incrementRight())
+        self.nameEntry1.bind('<Return>', lambda event: self._writeSingeFile('player1', self.player1.get()))
+        self.nameEntry2.bind('<Return>', lambda event: self._writeSingeFile('player2', self.player2.get()))
+        self.deckEntry1.bind('<Return>', lambda event: self._writeSingeFile('deck1', self.deck1.get()))
+        self.deckEntry2.bind('<Return>', lambda event: self._writeSingeFile('deck2', self.deck2.get()))
+        self.producerEntry.bind('<Return>', lambda event: self._writeSingeFile('producer', self.producer.get()))
         self.mainFrame.bind("<Button-1>", self.callback)
+        
 
     def readFilePaths(self):
         """
@@ -113,7 +137,7 @@ class obServer(tk.Frame):
             paths = json.load(jsonFile)
         return paths
 
-    def _writeSingleFile(self, field, value):
+    def _writeSingeFile(self, field, value):
         """ writes the value of a field to the respective file """
         with open(self.paths[field], 'w') as f:
             f.write(value)
@@ -162,6 +186,12 @@ class obServer(tk.Frame):
         self.lifeP1.set('20')
         self.lifeP2.set('20')
         self._updateLifeTotals()
+
+    def _generateDeckNames(self):
+        a1, a2 = random.choices(self.colA, k=2)
+        b1, b2 = random.choices(self.colB, k=2)
+        self.deck1.set(a1 + ' ' + b1)
+        self.deck2.set(a2 + ' ' + b2)
 
     def _resetLifeBtn(self):
         if askyesno('Reset Life Totals?', 'Do you really want to reset life totals?'):
