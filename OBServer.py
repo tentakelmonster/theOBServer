@@ -13,7 +13,7 @@ import json
 from tkinter.messagebox import askyesno
 import random
 try:
-    import keyboard
+    from pynput import keyboard
     print('Using global keybinds')
     GLOBAL_KEY_BINDS = True
 except ModuleNotFoundError as e:
@@ -23,7 +23,7 @@ except ModuleNotFoundError as e:
 path2pathJson = r'paths.json'   # use this if the json is in the same folder as the script. Use actual path otherwise.
 
 class obServer(tk.Frame):
-    def __init__(self, master):
+    def __init__(self, master, *listener):
         """ This runs the main functions of the GUI. """
         tk.Frame.__init__(self, master)
         self.pack(expand=True)
@@ -32,13 +32,15 @@ class obServer(tk.Frame):
         self.resetLife()
         self.mainFrame.focus_set()
         self.readInitStates()
-        self.colA = ["Full English", "Oops All", "Five Color", "Big", "Steamy", "Delverless", "Boomer", "Zoomer", "Pauper", 
-                "Saucy", "The legendary", "Topdeck", "Dead Guy", "Ye ol'", "Questionable", "3-0 6-0", "0-2 drop", "The Real Slim", 
-                "Million Dollar", "Invoke", "Chef Anthony's", "Phyrexian", "Regular", "Top", "Junk", "Bad", "Strong", "Cube", "Uber",
-                "Synergistic", "Tiny", "Eldrazi", "Turbo"]
+        self.colA = ["Full English", "Oops! All", "Five Color", "Big", "Steamy", "Delverless", "Boomer", "Zoomer", "Pauper", 
+                "Saucy", "The Legendary", "Topdeck", "Dead Guy", "Ye ol'", "Questionable", "3-0 6-0", "0-2 drop", "The Real Slim", 
+                "Million Dollar", "Invoke", "Chef Anthony's", "Phyrexian", "Regular", "Junk", "Bad", "Strong", "Cube", "Uber",
+                "Synergistic", "Tiny", "Eldrazi", "Turbo", "Squandered", "Irregular", "Bun Magic", "Babies First", "This Player's",
+                "WUBRG", "Gavin Verhey's", "Soul", "Death and", "Hardened", "Bathtub"]
         self.colB = ["Breakfast", "Aggrocontrol", "Tempo", "Tribal", "Baneslayers", "Mulldrifters", "Deck", "Problems", "Tron", 
                 "Ham Sandwich", "Bears", "Money Pile", "Baby!", "Sagas", "Triomes", "Zoo", "Looters", "Sushi", "Gods", 
-                "Moms", "Noodle", "Junk", "Megafauna", "Mustache", "Tools", "Synergy", "Saprolings", "Squirrels"]
+                "Moms", "Noodle", "Junk", "Big Boys", "Mustache", "Tools", "Synergy", "Saprolings", "Squirrels", "Netdeck",
+                "Superfriends", "Superenemies", "Stax", "Storm", "Robots", "Cascade", "Bogles", "Devotion", "Madness", "Cannons"]
 
     def build(self):
         """ Here the GUI is built. """
@@ -110,12 +112,7 @@ class obServer(tk.Frame):
         self.quitBtn = tk.Button(self.mainFrame, text=' Exit ', command=self._quit)
         self.quitBtn.grid(row=rowCount, column=5, padx=5, pady=5, sticky=tk.W)
         # set key binds
-        if GLOBAL_KEY_BINDS:
-            keyboard.add_hotkey('d', self._decrementLeft)
-            keyboard.add_hotkey('f', self._incrementLeft)
-            keyboard.add_hotkey('j', self._decrementRight)
-            keyboard.add_hotkey('k', self._incrementRight)
-        else:
+        if not GLOBAL_KEY_BINDS:
             self.mainFrame.bind('d', lambda event: self._decrementLeft())
             self.mainFrame.bind('f', lambda event: self._incrementLeft())
             self.mainFrame.bind('j', lambda event: self._decrementRight())
@@ -126,7 +123,7 @@ class obServer(tk.Frame):
         self.deckEntry2.bind('<Return>', lambda event: self._writeSingeFile('deck2', self.deck2.get()))
         self.producerEntry.bind('<Return>', lambda event: self._writeSingeFile('producer', self.producer.get()))
         self.mainFrame.bind("<Button-1>", self.callback)
-        
+
 
     def readFilePaths(self):
         """
@@ -188,8 +185,8 @@ class obServer(tk.Frame):
         self._updateLifeTotals()
 
     def _generateDeckNames(self):
-        a1, a2 = random.choices(self.colA, k=2)
-        b1, b2 = random.choices(self.colB, k=2)
+        a1, a2 = random.sample(self.colA, 2)
+        b1, b2 = random.sample(self.colB, 2)
         self.deck1.set(a1 + ' ' + b1)
         self.deck2.set(a2 + ' ' + b2)
 
@@ -233,7 +230,21 @@ class obServer(tk.Frame):
 
 
 if __name__ == '__main__':
-    root  = tk.Tk()
-    root.title('The OBServer')
-    observerApp = obServer(root)
-    root.mainloop()
+    if GLOBAL_KEY_BINDS:
+        root  = tk.Tk()
+        root.title('The OBServer')
+        observerApp = obServer(root)
+        listener = keyboard.GlobalHotKeys({
+            'd': observerApp._decrementLeft,
+            'f': observerApp._incrementLeft,
+            'j': observerApp._decrementRight,
+            'k': observerApp._incrementRight}) 
+        listener.start()
+        root.mainloop()
+        listener.stop()
+        listener.join()
+    else:
+        root  = tk.Tk()
+        root.title('The OBServer')
+        observerApp = obServer(root)
+        root.mainloop()
